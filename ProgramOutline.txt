@@ -1,0 +1,20 @@
+General Structure
+
+Red-Black Tree:
+-Has internal channel struct
+-Supports inserting new nodes (channels) w/ self-balancing
+-Supports removing nodes w/ self-balancing
+-Supports search by various types (sub count, vid count, country, etc…) with node return type
+
+B-Tree:
+-Has internal channel struct
+-Supports inserting new nodes (channels) w/ self-balancing
+-Supports removing nodes w/ self-balancing
+-Supports search by various types (sub count, vid count, country, etc…) with node return type
+
+Main:
+-Parses CSV file into both data structures
+-Create interface to search and view channel stats
+-Display desired information
+-Implement SFML graphics
+-Record and display times to compare the performance of each tree 
