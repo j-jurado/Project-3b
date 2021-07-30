@@ -1,8 +1,8 @@
 #pragma once
 #include "Channel.h"
 
-class RBTree {
-    struct Node {
+class RBTree{
+    struct Node{
         //Data carried
         Channel channel;
 
@@ -24,8 +24,13 @@ public:
     void setRoot(Channel newChannel);
 
     //Insertion
-    Node* insertNode(Node* newRoot, Channel newChannel);
-
+    void insertNode(Channel newChannel);
+    Node* insertBSTNode(Node* newRoot, Node* parent, Node* newNode);
+    void insertCorrection(Node* curr);
+    void leftRotate(Node* curr);
+    void rightRotate(Node* curr);
+    
     //Helper functions
     void inorder(Node* root);
+
 };
