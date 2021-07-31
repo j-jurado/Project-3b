@@ -1,7 +1,11 @@
 #pragma once
 #include "Channel.h"
+#include <vector>
+#include <stack>
+#include <queue>
 
 class RBTree{
+public:
     struct Node{
         //Data carried
         Channel channel;
@@ -16,9 +20,6 @@ class RBTree{
         Node(Channel newChannel);
     };
 
-private:
-    Node* root = nullptr;
-public:
     //Getter & Setter
     Node* getRoot();
     void setRoot(Channel newChannel);
@@ -29,8 +30,17 @@ public:
     void insertCorrection(Node* curr);
     void leftRotate(Node* curr);
     void rightRotate(Node* curr);
-    
-    //Helper functions
-    void inorder(Node* root);
 
+    //Helper functions
+    void inorderPrint(Node* root);
+
+    //Binary traversal
+    Node* searchByID(string targetID);
+    queue<Node*> searchByTopSubs(int capacity);
+    queue<Node*> searchByMinSubs(int minSubCount);
+    queue<Node*> searchByCategory(string targetCat, int capacity);
+    queue<Node*> searchByCountry(string targetCt, int capacity);
+
+private:
+    Node* root = nullptr;
 };
