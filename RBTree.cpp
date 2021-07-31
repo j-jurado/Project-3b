@@ -1,13 +1,15 @@
 #include "RBTree.h"
 #include <iostream>
+#include <vector>
+#include <stack>
 using namespace std;
 
 /*=== Node class functions ===*/
 
+//Node constructor
 RBTree::Node::Node(Channel newChannel){
     this->channel = newChannel;
 }
-
 
 /*=== RBTree class functions ===*/
 
@@ -19,17 +21,7 @@ void RBTree::setRoot(Channel newChannel){
     this->root = new Node(newChannel);
 }
 
-//Prints nodes w/ color in order for debugging purposes
-void RBTree::inorder(Node *root){
-    if(root == nullptr){
-        cout << "";
-    }
-    else{
-        inorder(root->left);
-        cout << root->channel.getID() << " : " << root->color << endl;
-        inorder(root->right);
-    }
-}
+/*= Insert Functions =*/
 
 //Insert new Channel node into RB tree (Use this in main)
 void RBTree::insertNode(Channel newChannel){
@@ -54,7 +46,7 @@ RBTree::Node *RBTree::insertBSTNode(Node* newRoot, Node* parent, Node* newNode){
         }
         return newRoot;
     }
-    if (newNode->channel.getID() < newRoot->channel.getID())
+    if (newNode->channel.getSubCount() < newRoot->channel.getSubCount())
         newRoot->left = insertBSTNode(newRoot->left, newRoot, newNode);
     else
         newRoot->right = insertBSTNode(newRoot->right, newRoot, newNode);
@@ -64,7 +56,7 @@ RBTree::Node *RBTree::insertBSTNode(Node* newRoot, Node* parent, Node* newNode){
 //Recolors and rotates inserted BST nodes to accommodate RB Tree rules
 void RBTree::insertCorrection(Node *curr){
     //Citation: Inspired by balancing algo in Professor Resch's RBTree ppt slide 5
-    
+
     //Recoloring based on root status
     if(curr->parent == nullptr){
         curr->color = false;
@@ -75,11 +67,11 @@ void RBTree::insertCorrection(Node *curr){
     if(curr->parent->color == false){
         return;
     }
-    
+
     //Mapping parent and grandparent
     Node* parent = curr->parent;
     Node* grandparent = curr->parent->parent;
-    
+
     //Mapping correct uncle
     Node* uncle = nullptr;
     if(curr->parent == curr->parent->parent->right && curr->parent->parent->left != nullptr){
@@ -98,14 +90,14 @@ void RBTree::insertCorrection(Node *curr){
         return;
     }
     //Only makes it this far if a rotation is needed
-    
+
     //If curr is a left-right child, it requires a primary left rotation
     if(curr == parent->right && parent == grandparent->left){
         leftRotate(parent);
         curr = parent;
         parent = curr->parent;
     }
-    //If curr is a right-left child, it requires a primary right rotation
+        //If curr is a right-left child, it requires a primary right rotation
     else if (curr == parent->left && parent == grandparent->right){
         rightRotate(parent);
         curr = parent;
@@ -130,7 +122,7 @@ void RBTree::insertCorrection(Node *curr){
 
 //Citation: Rotations inspired by rotation algo in slide 27 Trees-3 ppt
 void RBTree::leftRotate(Node *curr){
-   //Initial assigning
+    //Initial assigning
     Node* newParent = curr->right;
     curr->right = newParent->left;
 
@@ -173,4 +165,129 @@ void RBTree::rightRotate(Node *curr){
     //Final assigning
     newParent->right = curr;
     curr->parent = newParent;
+}
+
+/*=== Helper Functions ===*/
+
+//Prints nodes w/ color in order for debugging purposes
+void RBTree::inorderPrint(Node *newRoot){
+    if(newRoot == nullptr){
+        cout << "";
+    }
+    else{
+        inorderPrint(newRoot->left);
+        cout << newRoot->channel.getID() << " : " << newRoot->color << " : " << newRoot->channel.getSubCount() << endl;
+        inorderPrint(newRoot->right);
+    }
+}
+
+/*=== Search Functions ===*/
+
+//Reverse inorder search that returns targetNode
+RBTree::Node *RBTree::searchByID(string targetID){
+    stack<Node*> traversalStack;
+    Node* curr = root;
+    while(curr != nullptr || !traversalStack.empty()){
+        while(curr != nullptr){
+            traversalStack.push(curr);
+            curr = curr->left;
+        }
+        curr = traversalStack.top();
+        traversalStack.pop();
+        if(curr->channel.getID() == targetID){
+            return curr;
+        }
+        curr = curr->right;
+    }
+    return nullptr;
+}
+
+//Reverse inorder search that returns the top #capacity channels based on sub count
+queue<RBTree::Node *> RBTree::searchByTopSubs(int capacity){
+    stack<Node*> traversalStack;
+    queue<Node*> returnNodes;
+    int size = 0;
+    Node* curr = root;
+    while(curr != nullptr || !traversalStack.empty()){
+        while(curr != nullptr){
+            traversalStack.push(curr);
+            curr = curr->right;
+        }
+        curr = traversalStack.top();
+        returnNodes.push(curr);
+        size++;
+        traversalStack.pop();
+        if(size == capacity)
+            break;
+        curr = curr->left;
+    }
+    return returnNodes;
+}
+
+//Reverse inorder search that returns the top channels based on a minimum sub count
+queue<RBTree::Node *> RBTree::searchByMinSubs(int minSubCount){
+    stack<Node*> traversalStack;
+    queue<Node*> returnNodes;
+    Node* curr = root;
+    while(curr != nullptr || !traversalStack.empty()){
+        while(curr != nullptr){
+            traversalStack.push(curr);
+            curr = curr->right;
+        }
+        curr = traversalStack.top();
+        if(curr->channel.getSubCount() < minSubCount)
+            break;
+        returnNodes.push(curr);
+        traversalStack.pop();
+        curr = curr->left;
+    }
+    return returnNodes;
+}
+
+//Reverse inorder search by category (returns queue of channels with higher sub counts up front)
+queue<RBTree::Node *> RBTree::searchByCategory(string targetCat, int capacity){
+    stack<Node*> traversalStack;
+    queue<Node*> returnNodes;
+    int size = 0;
+    Node* curr = root;
+    while(curr != nullptr || !traversalStack.empty()){
+        while(curr != nullptr){
+            traversalStack.push(curr);
+            curr = curr->right;
+        }
+        curr = traversalStack.top();
+        traversalStack.pop();
+        if(curr->channel.getCategory() == targetCat){
+            returnNodes.push(curr);
+            size++;
+        }
+        if(size == capacity)
+            break;
+        curr = curr->left;
+    }
+    return returnNodes;
+}
+
+//Reverse inorder search by country (returns queue of channels with higher sub counts up front)
+queue<RBTree::Node *> RBTree::searchByCountry(string targetCt, int capacity){
+    stack<Node*> traversalStack;
+    queue<Node*> returnNodes;
+    int size = 0;
+    Node* curr = root;
+    while(curr != nullptr || !traversalStack.empty()){
+        while(curr != nullptr){
+            traversalStack.push(curr);
+            curr = curr->right;
+        }
+        curr = traversalStack.top();
+        traversalStack.pop();
+        if(curr->channel.getCountry() == targetCt){
+            returnNodes.push(curr);
+            size++;
+        }
+        if(size == capacity)
+            break;
+        curr = curr->left;
+    }
+    return returnNodes;
 }

@@ -16,6 +16,7 @@ private:
     int categoryID;
 
 public:
+
     //Getters
     string getID();
     string getTitle();
