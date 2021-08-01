@@ -36,7 +36,7 @@ public:
     void smallPrint(Node* curr);
     void largePrint(Node* curr);
 
-    //Binary traversal
+    //Search functions
     Node* searchByID(string targetID);
     queue<Node*> searchByTopSubs(int capacity);
     queue<Node*> searchByMinSubs(int minSubCount);

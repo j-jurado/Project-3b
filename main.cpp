@@ -1,5 +1,6 @@
 #include "RBTree.h"
 #include "Channel.h"
+#include "NTree.h"
 #include <iostream>
 #include <queue>
 #include <fstream>
@@ -18,7 +19,6 @@ void printSubMenu();
 typedef high_resolution_clock Clock;
 
 int main(){
-
     cout << "*********************************\n"
             "*   Youtube Channel Analytics   *\n"
             "*********************************\n"

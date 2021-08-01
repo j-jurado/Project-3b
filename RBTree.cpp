@@ -167,7 +167,7 @@ void RBTree::rightRotate(Node *curr){
     curr->parent = newParent;
 }
 
-/*=== Helper Functions ===*/
+/*= Helper Functions =*/
 
 //Prints nodes w/ color in order for debugging purposes
 void RBTree::inorderPrint(Node *newRoot){
@@ -216,7 +216,7 @@ void RBTree::largePrint(Node *curr) {
 
 }
 
-/*=== Search Functions ===*/
+/*= Search Functions =*/
 
 //Reverse inorder search that returns targetNode
 RBTree::Node *RBTree::searchByID(string targetID){
@@ -326,4 +326,3 @@ queue<RBTree::Node *> RBTree::searchByCountry(string targetCt, int capacity){
     }
     return returnNodes;
 }
-
