@@ -17,8 +17,8 @@ RBTree::Node::Node(Channel newChannel){
 RBTree::Node *RBTree::getRoot(){
     return this->root;
 }
-void RBTree::setRoot(Channel newChannel){
-    this->root = new Node(newChannel);
+void RBTree::setRoot(Node* newRoot){
+    this->root = newRoot;
 }
 
 /*= Insert Functions =*/
@@ -176,7 +176,18 @@ void RBTree::inorderPrint(Node *newRoot){
     }
     else{
         inorderPrint(newRoot->left);
-        cout << newRoot->channel.getID() << " : " << newRoot->color << " : " << newRoot->channel.getSubCount() << endl;
+
+        cout << "ID: " << newRoot->channel.getID() << endl;
+        cout << "Title: " << newRoot->channel.getTitle() << endl;
+        cout << "Category: " << newRoot->channel.getCategory() << endl;
+        cout << "Country: " << newRoot->channel.getCountry() << endl;
+        cout << "JoinDate: " << newRoot->channel.getJoinDate() << endl;
+        cout << "pictureURL: " << newRoot->channel.getPictureURL() << endl;
+        cout << "profileURL: " << newRoot->channel.getProfileURL() << endl;
+        cout << "SubCount: " << newRoot->channel.getSubCount() << endl;
+        cout << "VidCount: " << newRoot->channel.getVidCount() << endl;
+        cout << "CatID: " << newRoot->channel.getCategoryID() << endl;
+        cout << "---------------------------------" << endl;
         inorderPrint(newRoot->right);
     }
 }
