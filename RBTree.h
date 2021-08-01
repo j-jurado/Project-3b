@@ -22,7 +22,7 @@ public:
 
     //Getter & Setter
     Node* getRoot();
-    void setRoot(Channel newChannel);
+    void setRoot(Node* newRoot);
 
     //Insertion
     void insertNode(Channel newChannel);
