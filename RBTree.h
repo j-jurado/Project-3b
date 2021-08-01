@@ -33,6 +33,8 @@ public:
 
     //Helper functions
     void inorderPrint(Node* root);
+    void smallPrint(Node* curr);
+    void largePrint(Node* curr);
 
     //Binary traversal
     Node* searchByID(string targetID);

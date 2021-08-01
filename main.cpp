@@ -7,13 +7,101 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <chrono>
 
 using namespace std;
+using namespace chrono;
 
 RBTree::Node* parseCSVinRBTree();
-
+void printMainMenu();
+void printSubMenu();
+typedef high_resolution_clock Clock;
 
 int main(){
+
+    cout << "*********************************\n"
+            "*   Youtube Channel Analytics   *\n"
+            "*********************************\n"
+            "* Filter, search, and view the  *\n"
+            "* statistics of the top Youtube *\n"
+            "* channels all in one place!    *\n"
+            "*********************************\n";
+
+    cout << endl;
+    cout << "Lets get started!" << endl;
+    cout << "1. Parse CSV data" << endl;
+    cout << "2. Exit program" << endl;
+    cout << "Please make a selection:";
+
+    RBTree tree;
+    //Initiate second data structure
+
+    int option = -1;
+    cin >> option;
+
+    if(option == 0){
+        return 0;
+    }
+    else if (option == 1){
+        cout << endl;
+        cout << "Parsing..." << endl;
+        auto t1 = Clock::now();
+        tree.setRoot(parseCSVinRBTree());
+        auto t2 = Clock::now();
+        cout << "Red-Black Tree parse time: " << duration_cast<milliseconds>(t2-t1).count() << " milliseconds" << endl;
+        //Copy last four lines for second data structure
+        cout << endl;
+
+        while(true){
+            printMainMenu();
+            cin >> option;
+            cout << endl;
+
+            if (option == 1){
+                cout << "---------- Search by Top Subs ---------" << endl;
+                cout << "Enter number of channels to display:";
+                int capacity;
+                cin >> capacity;
+                t1 = Clock::now();
+                queue<RBTree::Node*> q = tree.searchByTopSubs(capacity);
+                t2 = Clock::now();
+                cout << "Red-Black Tree search time: " << duration_cast<nanoseconds>(t2-t1).count() << " nanoseconds" << endl;
+                cout << endl;
+                printSubMenu();
+                cin >> option;
+                cout << endl;
+                cout << "Displaying top " << capacity << " channels..." << endl;
+                cout << endl;
+                while(!q.empty()){
+                    if(option == 1)
+                        tree.smallPrint(q.front());
+                    else if (option == 2)
+                        tree.largePrint(q.front());
+                    q.pop();
+                }
+                cout << endl;
+            }
+            else if (option == 2){
+
+            }
+            else if (option == 3){
+
+            }
+            else if (option == 4){
+
+            }
+            else if (option == 5){
+
+            }
+            else if(option == 6){
+                return 0;
+            }
+            else{
+                cout << "Error: Enter a value from the menu" << endl;
+            }
+
+        }
+    }
 
     return 0;
 }
@@ -86,4 +174,22 @@ RBTree::Node* parseCSVinRBTree(){
         }
     }
     return tree.getRoot();
+}
+
+void printMainMenu() {
+    cout << "-------------- Main Menu --------------\n"
+            "1. View overall top subscribed channels\n"
+            "2. Filter by minimum subscriber count\n"
+            "3. Filter by top channels per category\n"
+            "4. Filter by top channels per country\n"
+            "5. Search by channel ID number\n"
+            "6. Exit program\n"
+            "---------------------------------------\n"
+            "Please make a selection:";
+}
+void printSubMenu(){
+    cout << "Would you like to view extended or minimal statistics?\n"
+            "1. Minimal\n"
+            "2. Extended\n"
+            "Please make a selection:";
 }

@@ -192,6 +192,30 @@ void RBTree::inorderPrint(Node *newRoot){
     }
 }
 
+void RBTree::smallPrint(RBTree::Node *curr) {
+    cout << "Title: " << curr->channel.getTitle() << endl;
+    cout << "Subscribers: " << curr->channel.getSubCount() << endl;
+    cout << "Channel ID: " << curr->channel.getID() << endl;
+    cout << "---------------------------------------" << endl;
+}
+
+void RBTree::largePrint(Node *curr) {
+    cout << "Title: " << curr->channel.getTitle() << endl;
+    cout << "Subscribers: " << curr->channel.getSubCount() << endl;
+    cout << "Video Count: " << curr->channel.getVidCount() << endl;
+    cout << "Category: " << curr->channel.getCategory() << endl;
+    cout << "Country: ";
+    if (curr->channel.getCountry() == "")
+        cout << "N/A" << endl;
+    else
+        cout << curr->channel.getCountry() << endl;
+    cout << "Join Date: " << curr->channel.getJoinDate() << endl;
+    cout << "Channel ID: " << curr->channel.getID() << endl;
+    cout << "Profile URl: " << curr->channel.getProfileURL() << endl;
+    cout << "---------------------------------------" << endl;
+
+}
+
 /*=== Search Functions ===*/
 
 //Reverse inorder search that returns targetNode
@@ -302,3 +326,4 @@ queue<RBTree::Node *> RBTree::searchByCountry(string targetCt, int capacity){
     }
     return returnNodes;
 }
+
