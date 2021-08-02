@@ -1,5 +1,8 @@
 #include "RBTree.h"
+#include "NTree.h"
 #include <vector>
+#include "SFML/Network.hpp"
+#include "SFML/System.hpp"
 #include "SFML/Graphics.hpp"
 #include "Channel.h"
 #include "Graph.h"
@@ -12,6 +15,7 @@ int Graph::bar::maxNumber = 0;
 int Graph::bar::numberOfBars = 0;
 float Graph::bar::pixelWidthPerPoint = 10;
 float Graph::bar::outlineWidth = 2.0f;
+float Graph::MaxBarLengthRatio = 0.9f;
 
 
 void Graph::runTestGraphic() {
@@ -55,6 +59,12 @@ void Graph::EventLoop() {
 
 void Graph::displayRBTree(queue<RBTree::Node*>& q, string title) {
     int size = q.size();
+    // max out bar graph at 2 channels
+    if (size > 20) {
+        size = 20;
+        cout << "Note: Histogram can onlly display up to 20 channels." << endl;
+        cout << "Displaying the first 20... " << endl;
+    }
     bar::numberOfBars = size;
 
     for (int i = 0; i < size; i++) {
@@ -71,6 +81,7 @@ void Graph::displayRBTree(queue<RBTree::Node*>& q, string title) {
     EventLoop();
 }
 
+
 void Graph::RBTreeHandler(queue<RBTree::Node*>& q, string title) {
     sf::RenderWindow window(sf::VideoMode(1280, 720), title);
 
@@ -78,6 +89,36 @@ void Graph::RBTreeHandler(queue<RBTree::Node*>& q, string title) {
     myGraph.displayRBTree(q, title);
 }
 
+void Graph::NTreeHandler(queue<NTree::Node*>& q, string title) {
+    sf::RenderWindow window(sf::VideoMode(1280, 720), title);
+
+    Graph myGraph(window);
+    myGraph.displayNTree(q, title);
+}
+void Graph::displayNTree(queue<NTree::Node*>& q, string title) {
+    int size = q.size();
+    // max out bar graph at 2 channels
+    if (size > 20) {
+        size = 20;
+        cout << "Note: Histogram can onlly display up to 20 channels." << endl;
+        cout << "Displaying the first 20... " << endl;
+    }
+    bar::numberOfBars = size;
+
+    for (int i = 0; i < size; i++) {
+        Channel currChannel = q.front()->channel;
+        q.pop();
+        Bars.push_back(bar(currChannel.getTitle(), currChannel.getSubCount()));
+
+        if (currChannel.getSubCount() > bar::maxNumber)
+            bar::maxNumber = currChannel.getSubCount();
+    }
+
+    setChannelAesthetics();
+
+    EventLoop();
+
+}
 
 
 
@@ -87,23 +128,45 @@ void Graph::setChannelAesthetics() {
 
     float barheight = height / bar::numberOfBars / 2.0f;
 
+    // If there are more than 10 bars, readjust the maximum ratio so that channel names can fit on the right side
+    bool aboveThreshold = false;
+    if (bar::numberOfBars > 10) {
+        MaxBarLengthRatio = 0.8f;
+        aboveThreshold = true;
+    }
+
+
     // If the bars are too big, readjust the ratio so that they fit in the window
     if (bar::maxNumber * bar::pixelWidthPerPoint > MaxBarLengthRatio * width)
         bar::pixelWidthPerPoint = (float)MaxBarLengthRatio * (float)width / (float)bar::maxNumber;
 
 
     for (int i = 0; i < bar::numberOfBars; i++) {
-        Bars[i].setSize(sf::Vector2f(Bars[i].displayNumber * bar::pixelWidthPerPoint, barheight - bar::outlineWidth));
-        Bars[i].setPosition(sf::Vector2f(0, barheight * 2 * i + barheight));
+        Graph::bar& currBar = Bars[i];
+        currBar.setSize(sf::Vector2f(currBar.displayNumber * bar::pixelWidthPerPoint, barheight - bar::outlineWidth));
+        currBar.setPosition(sf::Vector2f(0, barheight * 2 * i + barheight));
 
-        Bars[i].setFillColor(sf::Color::Blue);
-        Bars[i].setOutlineColor(sf::Color::Black);
-        Bars[i].setOutlineThickness(bar::outlineWidth);
+        currBar.setFillColor(sf::Color::Blue);
+        currBar.setOutlineThickness(bar::outlineWidth);
+        currBar.setOutlineColor(sf::Color::Black);
 
-        Bars[i].channelLabel.setOrigin(sf::Vector2f(0, Bars[i].channelLabel.getGlobalBounds().height * 2));
-        Bars[i].channelLabel.setPosition(sf::Vector2f(0, barheight * 2 * i + barheight));
-        Bars[i].numberLabel.setOrigin(sf::Vector2f(Bars[i].numberLabel.getGlobalBounds().width + 10, Bars[i].numberLabel.getGlobalBounds().height));
-        Bars[i].numberLabel.setPosition(sf::Vector2f(Bars[i].getSize().x, barheight * 2 * i + barheight + barheight/2));
+        if (aboveThreshold) {
+            currBar.numberLabel.setCharacterSize(12);
+            currBar.channelLabel.setCharacterSize(12);
+        }
+
+
+        currBar.numberLabel.setOrigin(sf::Vector2f(currBar.numberLabel.getGlobalBounds().width + 10, currBar.numberLabel.getGlobalBounds().height));
+        currBar.numberLabel.setPosition(sf::Vector2f(Bars[i].getSize().x, barheight * 2 * i + barheight + barheight/2));
+
+        if (!aboveThreshold) {
+            currBar.channelLabel.setOrigin(sf::Vector2f(0, currBar.channelLabel.getGlobalBounds().height * 2));
+            currBar.channelLabel.setPosition(sf::Vector2f(0, barheight * 2 * i + barheight));
+        }
+        else {
+            currBar.channelLabel.setOrigin(sf::Vector2f(-10, currBar.channelLabel.getGlobalBounds().height));
+            currBar.channelLabel.setPosition(sf::Vector2f(currBar.getSize().x, barheight * 2 * i + barheight + barheight /2));
+        }
 
     }
 

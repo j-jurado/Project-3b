@@ -31,7 +31,7 @@ public:
 	};
 
 	std::vector<bar> Bars;
-	const float MaxBarLengthRatio = 0.9f;
+	static float MaxBarLengthRatio;
 
 	sf::RectangleShape background;
 	static sf::Font font;
@@ -39,12 +39,14 @@ public:
 	void runTestGraphic();
 
 	void displayRBTree(queue<RBTree::Node*>& q, string title = "Title");
+	void displayNTree(queue<NTree::Node*>& q, string title = "Title");
 
 	void setChannelAesthetics();
 	void Draw();
 	void EventLoop();
 
 	void static RBTreeHandler(queue<RBTree::Node*>& q, string title = "Title");
+	void static NTreeHandler(queue<NTree::Node*>& q, string title = "Title");
 
 	Graph(sf::RenderWindow& Window);
 
