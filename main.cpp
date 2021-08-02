@@ -14,11 +14,13 @@ using namespace std;
 using namespace chrono;
 
 RBTree::Node* parseCSVinRBTree();
+NTree::Node* parseCSVinNTree(int degree);
 void printMainMenu();
 void printSubMenu();
 typedef high_resolution_clock Clock;
 
 int main(){
+
     cout << "*********************************\n"
             "*   Youtube Channel Analytics   *\n"
             "*********************************\n"
@@ -33,8 +35,7 @@ int main(){
     cout << "2. Exit program" << endl;
     cout << "Please make a selection:";
 
-    RBTree tree;
-    //Initiate second data structure
+
 
     int option = -1;
     cin >> option;
@@ -43,14 +44,28 @@ int main(){
         return 0;
     }
     else if (option == 1){
+
         cout << endl;
+        cout << "Enter a base n for the N-ary Tree:";
+        int degree;
+        cin >> degree;
+
         cout << "Parsing..." << endl;
-        auto t1 = Clock::now();
-        tree.setRoot(parseCSVinRBTree());
-        auto t2 = Clock::now();
-        cout << "Red-Black Tree parse time: " << duration_cast<milliseconds>(t2-t1).count() << " milliseconds" << endl;
-        //Copy last four lines for second data structure
         cout << endl;
+        RBTree rbTree;
+        NTree nTree(degree);
+
+        auto t1 = Clock::now();
+        rbTree.setRoot(parseCSVinRBTree());
+        auto t2 = Clock::now();
+        cout << "Red-Black Tree parse time: " << duration<double>(t2-t1).count() << " seconds" << endl;
+
+        t1 = Clock::now();
+        nTree.setRoot(parseCSVinNTree(degree));
+        t2 = Clock::now();
+        cout << "N-ary Tree parse time: " << duration<double>(t2-t1).count() << " seconds" << endl;
+        cout << endl;
+
 
         while(true){
             printMainMenu();
@@ -63,7 +78,7 @@ int main(){
                 int capacity;
                 cin >> capacity;
                 t1 = Clock::now();
-                queue<RBTree::Node*> q = tree.searchByTopSubs(capacity);
+                queue<RBTree::Node*> q = rbTree.searchByTopSubs(capacity);
                 t2 = Clock::now();
                 cout << "Red-Black Tree search time: " << duration_cast<nanoseconds>(t2-t1).count() << " nanoseconds" << endl;
                 cout << endl;
@@ -74,9 +89,9 @@ int main(){
                 cout << endl;
                 while(!q.empty()){
                     if(option == 1)
-                        tree.smallPrint(q.front());
+                        rbTree.smallPrint(q.front());
                     else if (option == 2)
-                        tree.largePrint(q.front());
+                        rbTree.largePrint(q.front());
                     q.pop();
                 }
                 cout << endl;
@@ -170,6 +185,88 @@ RBTree::Node* parseCSVinRBTree(){
 
             //Inserts channel into RBTree and clears the line vector
             tree.insertNode(c);
+            fullLine.clear();
+        }
+    }
+    return tree.getRoot();
+}
+
+//Parses CSV cells and inserts them into NTree. Returns root node of new NTree
+NTree::Node* parseCSVinNTree(int degree){
+    string line;
+    //Line vector to track all cells, or fields, of the line
+    vector<string> fullLine;
+    ifstream file("channels.csv");
+
+    NTree tree(degree);
+    NTree::Node* prev = nullptr;
+
+    if (file.is_open()){
+        //Extract first line
+        getline(file, line);
+
+        //While there is a line to read
+        while(getline(file,line)){
+            istringstream stream(line);
+            bool quoteStatus = true;
+            string cell;
+            string newCell;
+
+            //Keeps reading over cells that have commas in quotes not meant to be delimiters
+            while(getline(stream, cell, ',')){
+                if(count(cell.begin(), cell.end(), '"') % 2 != 0){
+                    quoteStatus = !quoteStatus;
+                }
+                string tempComma;
+                if(quoteStatus)
+                    tempComma = "";
+                else
+                    tempComma = ",";
+                newCell += cell + tempComma;
+                if(quoteStatus){
+                    fullLine.push_back(newCell);
+                    newCell.clear();
+                }
+            }
+
+            //Creates appropriate variables from CSV cells
+            int categoryID = stoi(fullLine[0]);
+            string category = fullLine[1];
+            string channelID = fullLine[2];
+            string country = fullLine[3];
+            int subscriberCount = stoi(fullLine[4]);
+            string joinDate = fullLine[5];
+            string pictureURL = fullLine[6];
+            string profileURL = fullLine[7];
+            string title = fullLine[8];
+            int videoCount = stoi(fullLine[9]);
+
+            //Creates channel object and inserts appropriate values
+            Channel c;
+            c.setID(channelID);
+            c.setTitle(title);
+            c.setCategory(category);
+            c.setCountry(country);
+            c.setJoinDate(joinDate);
+            c.setPictureURL(pictureURL);
+            c.setProfileURL(profileURL);
+            c.setSubCount(subscriberCount);
+            c.setVidCount(videoCount);
+            c.setCategoryID(categoryID);
+
+            //Inserts channel into RBTree and clears the line vector
+
+            if(tree.getRoot() == nullptr){
+                NTree::Node* newRoot = new NTree::Node(c, nullptr);
+                tree.insertNode(newRoot, nullptr);
+                tree.getRoot()->parent = tree.getRoot();
+                prev = tree.getRoot();
+            }
+            else{
+                NTree::Node* newNode = new NTree::Node(c, nullptr);
+                tree.insertNode(newNode, prev);
+                prev = newNode;
+            }
             fullLine.clear();
         }
     }

@@ -192,7 +192,7 @@ void RBTree::inorderPrint(Node *newRoot){
     }
 }
 
-void RBTree::smallPrint(RBTree::Node *curr) {
+void RBTree::smallPrint(Node *curr) {
     cout << "Title: " << curr->channel.getTitle() << endl;
     cout << "Subscribers: " << curr->channel.getSubCount() << endl;
     cout << "Channel ID: " << curr->channel.getID() << endl;
@@ -213,12 +213,11 @@ void RBTree::largePrint(Node *curr) {
     cout << "Channel ID: " << curr->channel.getID() << endl;
     cout << "Profile URl: " << curr->channel.getProfileURL() << endl;
     cout << "---------------------------------------" << endl;
-
 }
 
 /*= Search Functions =*/
 
-//Reverse inorder search that returns targetNode
+//Reverse inorder search that returns target Node
 RBTree::Node *RBTree::searchByID(string targetID){
     stack<Node*> traversalStack;
     Node* curr = root;
