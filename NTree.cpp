@@ -65,7 +65,7 @@ void NTree::insertNode(Node* c, Node* prev){
         while(true){
             queue<Node*> childrenNodes;
             childrenNodes.push(prev);
-            int currWidth;
+            int currWidth = 0;
             while(!childrenNodes.empty()){
                 if(childrenNodes.front()->children.size() == 0 && currWidth < lineWidth){
                     childrenNodes.front()->children.push_back(c);
