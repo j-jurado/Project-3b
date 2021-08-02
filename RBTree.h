@@ -18,6 +18,8 @@ public:
 
         //Constructor
         Node(Channel newChannel);
+
+
     };
 
     //Getter & Setter

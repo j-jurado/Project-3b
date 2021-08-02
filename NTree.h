@@ -2,6 +2,7 @@
 #include "Channel.h"
 #include <vector>
 #include <queue>
+#include <deque>
 
 class NTree{
 public:
@@ -30,8 +31,6 @@ public:
     void levelPrint();
     void smallPrint(Node* curr);
     void largePrint(Node* curr);
-    Node* recursiveFind(Node* curr);
-    Node* recursiveFind2(Node* curr);
 
     //Search functions
     Node* searchByID(string targetID);

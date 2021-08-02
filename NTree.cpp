@@ -1,6 +1,9 @@
 #include "NTree.h"
 #include <queue>
+#include <stack>
 #include <cmath>
+#include <deque>
+#include <algorithm>
 using namespace std;
 
 /*=== Node Class Functions ===*/
@@ -143,4 +146,112 @@ NTree::Node *NTree::searchByID(string targetID){
         }
         parentCount = searchQ.size();
     }
+}
+
+queue<NTree::Node *> NTree::searchByTopSubs(int capacity) {
+    queue<Node*> searchQ;
+    queue<Node*> returnQ;
+    vector<Node*> nodes;
+    searchQ.push(root);
+    int parentCount = 1;
+
+    while(!searchQ.empty()){
+        for(int j = 0; j < parentCount; j++){
+            for(int i = 0; i < searchQ.front()->children.size(); i++){
+                searchQ.push(searchQ.front()->children[i]);
+            }
+            nodes.push_back(searchQ.front());
+            searchQ.pop();
+        }
+        parentCount = searchQ.size();
+    }
+    sort(nodes.begin(), nodes.end(), [](Node* lhs, Node* rhs){return lhs->channel.subscriberCount < rhs->channel.subscriberCount;});
+    int index = nodes.size()-1;
+    for(int i = 0; i < capacity; i++) {
+        returnQ.push(nodes[index]);
+        index--;
+    }
+    return returnQ;
+}
+
+queue<NTree::Node *> NTree::searchByMinSubs(int minSubCount) {
+    queue<Node*> searchQ;
+    queue<Node*> returnQ;
+    vector<Node*> nodes;
+    searchQ.push(root);
+    int parentCount = 1;
+
+    while(!searchQ.empty()){
+        for(int j = 0; j < parentCount; j++){
+            for(int i = 0; i < searchQ.front()->children.size(); i++){
+                searchQ.push(searchQ.front()->children[i]);
+            }
+            nodes.push_back(searchQ.front());
+            searchQ.pop();
+        }
+        parentCount = searchQ.size();
+    }
+    sort(nodes.begin(), nodes.end(), [](Node* lhs, Node* rhs){return lhs->channel.subscriberCount < rhs->channel.subscriberCount;});
+    int index = nodes.size()-1;
+    while(nodes[index]->channel.getSubCount() > minSubCount){
+        returnQ.push(nodes[index]);
+        index--;
+    }
+    return returnQ;
+}
+
+queue<NTree::Node *> NTree::searchByCategory(string targetCat, int capacity) {
+    queue<Node*> searchQ;
+    queue<Node*> returnQ;
+    vector<Node*> nodes;
+    searchQ.push(root);
+    int parentCount = 1;
+    if(searchQ.front()->channel.getCategory() == targetCat){
+        nodes.push_back(searchQ.front());
+    }
+    while(!searchQ.empty()){
+        for(int j = 0; j < parentCount; j++){
+            for(int i = 0; i < searchQ.front()->children.size(); i++){
+                searchQ.push(searchQ.front()->children[i]);
+            }
+            if(searchQ.front()->channel.getCategory() == targetCat){
+                nodes.push_back(searchQ.front());
+            }
+            searchQ.pop();
+        }
+        parentCount = searchQ.size();
+    }
+    sort(nodes.begin(), nodes.end(), [](Node* lhs, Node* rhs){return lhs->channel.subscriberCount < rhs->channel.subscriberCount;});
+    for(int i = 1; i <= capacity; i++){
+        returnQ.push(nodes[nodes.size()-i]);
+    }
+    return returnQ;
+}
+
+queue<NTree::Node *> NTree::searchByCountry(string targetCt, int capacity) {
+    queue<Node*> searchQ;
+    queue<Node*> returnQ;
+    vector<Node*> nodes;
+    searchQ.push(root);
+    int parentCount = 1;
+    if(searchQ.front()->channel.getCountry() == targetCt){
+        nodes.push_back(searchQ.front());
+    }
+    while(!searchQ.empty()){
+        for(int j = 0; j < parentCount; j++){
+            for(int i = 0; i < searchQ.front()->children.size(); i++){
+                searchQ.push(searchQ.front()->children[i]);
+            }
+            if(searchQ.front()->channel.getCountry() == targetCt){
+                nodes.push_back(searchQ.front());
+            }
+            searchQ.pop();
+        }
+        parentCount = searchQ.size();
+    }
+    sort(nodes.begin(), nodes.end(), [](Node* lhs, Node* rhs){return lhs->channel.subscriberCount < rhs->channel.subscriberCount;});
+    for(int i = 1; i <= capacity; i++){
+        returnQ.push(nodes[nodes.size()-i]);
+    }
+    return returnQ;
 }

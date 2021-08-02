@@ -4,14 +4,13 @@ using namespace std;
 
 class Channel {
 private:
-    string channelID;
     string title;
+    string channelID;
     string category;
     string country;
     string joinDate;
     string pictureURL;
     string profileURL;
-    int subscriberCount;
     int videoCount;
     int categoryID;
 
@@ -40,4 +39,6 @@ public:
     void setSubCount(int newCount);
     void setVidCount(int newCount);
     void setCategoryID(int newID);
+
+    int subscriberCount;
 };

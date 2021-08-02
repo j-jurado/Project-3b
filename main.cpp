@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <vector>
 #include <chrono>
+#include <string>
 
 using namespace std;
 using namespace chrono;
@@ -66,6 +67,14 @@ int main(){
         cout << "N-ary Tree parse time: " << duration<double>(t2-t1).count() << " seconds" << endl;
         cout << endl;
 
+        cout << "Both trees will be used, but only one can be viewed at a time." << endl;
+        cout << "1. Red-Black Tree" << endl;
+        cout << "2. N-ary Tree" << endl;
+        cout << "Please select a tree to view results from:";
+        int viewTree;
+        cin >> viewTree;
+        cout << endl;
+
 
         while(true){
             printMainMenu();
@@ -77,33 +86,196 @@ int main(){
                 cout << "Enter number of channels to display:";
                 int capacity;
                 cin >> capacity;
+
                 t1 = Clock::now();
-                queue<RBTree::Node*> q = rbTree.searchByTopSubs(capacity);
+                queue<RBTree::Node*> rbQ = rbTree.searchByTopSubs(capacity);
                 t2 = Clock::now();
-                cout << "Red-Black Tree search time: " << duration_cast<nanoseconds>(t2-t1).count() << " nanoseconds" << endl;
+                cout << "Red-Black Tree search time: " << duration_cast<milliseconds>(t2-t1).count() << " milliseconds" << endl;
+
+                t1 = Clock::now();
+                queue<NTree::Node*> nQ = nTree.searchByTopSubs(capacity);
+                t2 = Clock::now();
+                cout << "N-ary Tree search time: " << duration_cast<milliseconds>(t2-t1).count() << " milliseconds" << endl;
+
                 cout << endl;
                 printSubMenu();
                 cin >> option;
                 cout << endl;
-                cout << "Displaying top " << capacity << " channels..." << endl;
-                cout << endl;
-                while(!q.empty()){
-                    if(option == 1)
-                        rbTree.smallPrint(q.front());
-                    else if (option == 2)
-                        rbTree.largePrint(q.front());
-                    q.pop();
-                }
+
+                if(option == 1)
+                    if(viewTree == 1)
+                        while(!rbQ.empty()){
+                            rbTree.smallPrint(rbQ.front());
+                            rbQ.pop();
+                        }
+                    else{
+                        while(!nQ.empty()){
+                            nTree.smallPrint(nQ.front());
+                            nQ.pop();
+                        }
+                    }
+                else if (option == 2)
+                    while(!rbQ.empty()){
+                        rbTree.largePrint(rbQ.front());
+                        rbQ.pop();
+                    }
+                    else{
+                        while(!nQ.empty()){
+                            nTree.largePrint(nQ.front());
+                            nQ.pop();
+                        }
+                    }
                 cout << endl;
             }
             else if (option == 2){
+                cout << "---------- Search by Min Subs ---------" << endl;
+                cout << "Enter minimum number of subscribers:";
+                int capacity;
+                cin >> capacity;
 
+                t1 = Clock::now();
+                queue<RBTree::Node*> rbQ = rbTree.searchByMinSubs(capacity);
+                t2 = Clock::now();
+                cout << "Red-Black Tree search time: " << duration_cast<milliseconds>(t2-t1).count() << " milliseconds" << endl;
+
+                t1 = Clock::now();
+                queue<NTree::Node*> nQ = nTree.searchByMinSubs(capacity);
+                t2 = Clock::now();
+                cout << "N-ary Tree search time: " << duration_cast<milliseconds>(t2-t1).count() << " milliseconds" << endl;
+
+                cout << endl;
+                printSubMenu();
+                cin >> option;
+                cout << endl;
+
+                if(option == 1)
+                    if(viewTree == 1)
+                        while(!rbQ.empty()){
+                            rbTree.smallPrint(rbQ.front());
+                            rbQ.pop();
+                        }
+                    else{
+                        while(!nQ.empty()){
+                            nTree.smallPrint(nQ.front());
+                            nQ.pop();
+                        }
+                    }
+                else if (option == 2)
+                    while(!rbQ.empty()){
+                        rbTree.largePrint(rbQ.front());
+                        rbQ.pop();
+                    }
+                else{
+                    while(!nQ.empty()){
+                        nTree.largePrint(nQ.front());
+                        nQ.pop();
+                    }
+                }
+                cout << endl;
             }
             else if (option == 3){
+                cout << "---------- Search by Category ---------" << endl;
+                cout << "Enter category name:";
+                string targetCat;
+                cin >> targetCat;
 
+                cout << "How many channels do you want to display?";
+                int capacity;
+                cin >> capacity;
+
+                t1 = Clock::now();
+                queue<RBTree::Node*> rbQ = rbTree.searchByCategory(targetCat, capacity);
+                t2 = Clock::now();
+                cout << "Red-Black Tree search time: " << duration_cast<nanoseconds>(t2-t1).count() << " milliseconds" << endl;
+
+                t1 = Clock::now();
+                queue<NTree::Node*> nQ = nTree.searchByCategory(targetCat, capacity);
+                t2 = Clock::now();
+                cout << "N-ary Tree search time: " << duration_cast<nanoseconds>(t2-t1).count() << " milliseconds" << endl;
+
+                cout << endl;
+                printSubMenu();
+                cin >> option;
+                cout << endl;
+
+                if(option == 1)
+                    if(viewTree == 1)
+                        while(!rbQ.empty()){
+                            rbTree.smallPrint(rbQ.front());
+                            rbQ.pop();
+                        }
+                    else{
+                        while(!nQ.empty()){
+                            nTree.smallPrint(nQ.front());
+                            nQ.pop();
+                        }
+                    }
+                else if (option == 2)
+                    while(!rbQ.empty()){
+                        rbTree.largePrint(rbQ.front());
+                        rbQ.pop();
+                    }
+                else{
+                    while(!nQ.empty()){
+                        nTree.largePrint(nQ.front());
+                        nQ.pop();
+                    }
+                }
+                cout << endl;
             }
             else if (option == 4){
+                cout << "---------- Search by Country ----------" << endl;
+                cout << "Enter country name:";
+                string targetCt;
+                getline(cin, targetCt);
+                cin.ignore();
+                cin.clear();
+                cin.sync();
 
+                cout << "How many channels do you want to display?";
+                int capacity;
+                cin >> capacity;
+                cin.ignore();
+
+                t1 = Clock::now();
+                queue<RBTree::Node*> rbQ = rbTree.searchByCountry(targetCt, capacity);
+                t2 = Clock::now();
+                cout << "Red-Black Tree search time: " << duration_cast<nanoseconds>(t2-t1).count() << " milliseconds" << endl;
+
+                t1 = Clock::now();
+                queue<NTree::Node*> nQ = nTree.searchByCountry(targetCt, capacity);
+                t2 = Clock::now();
+                cout << "N-ary Tree search time: " << duration_cast<nanoseconds>(t2-t1).count() << " milliseconds" << endl;
+
+                cout << endl;
+                printSubMenu();
+                cin >> option;
+                cout << endl;
+
+                if(option == 1)
+                    if(viewTree == 1)
+                        while(!rbQ.empty()){
+                            rbTree.smallPrint(rbQ.front());
+                            rbQ.pop();
+                        }
+                    else{
+                        while(!nQ.empty()){
+                            nTree.smallPrint(nQ.front());
+                            nQ.pop();
+                        }
+                    }
+                else if (option == 2)
+                    while(!rbQ.empty()){
+                        rbTree.largePrint(rbQ.front());
+                        rbQ.pop();
+                    }
+                else{
+                    while(!nQ.empty()){
+                        nTree.largePrint(nQ.front());
+                        nQ.pop();
+                    }
+                }
+                cout << endl;
             }
             else if (option == 5){
 
