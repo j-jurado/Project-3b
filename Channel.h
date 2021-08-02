@@ -40,5 +40,6 @@ public:
     void setVidCount(int newCount);
     void setCategoryID(int newID);
 
+    //Public var for comparison purposes
     int subscriberCount;
 };

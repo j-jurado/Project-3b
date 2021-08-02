@@ -39,6 +39,7 @@ public:
     queue<Node*> searchByCategory(string targetCat, int capacity);
     queue<Node*> searchByCountry(string targetCt, int capacity);
 
+    //Public vars
     int height;
     int lineWidth;
 

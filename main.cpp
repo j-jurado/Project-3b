@@ -1,16 +1,13 @@
 #include "RBTree.h"
-#include "Channel.h"
 #include "NTree.h"
 #include <iostream>
 #include <queue>
 #include <fstream>
 #include <sstream>
-#include <iostream>
 #include <algorithm>
 #include <vector>
 #include <chrono>
 #include <string>
-#include "Graph.h"
 
 using namespace std;
 using namespace chrono;
@@ -21,21 +18,7 @@ void printMainMenu();
 void printSubMenu();
 typedef high_resolution_clock Clock;
 
-void GraphDebugger() {
-    RBTree rbTree;
-    rbTree.setRoot(parseCSVinRBTree());
-    int capacity;
-    cout << "Number of channels to display: ";
-    cin >> capacity;
-    cout << endl;
-    queue<RBTree::Node*> rbQ = rbTree.searchByTopSubs(capacity);
-    queue<RBTree::Node*> rbQcopy = rbQ;
-
-    Graph::RBTreeHandler(rbQcopy, "Max Subscribers");
-}
-
 int main(){
-    //GraphDebugger();
 
     cout << "*********************************\n"
             "*   Youtube Channel Analytics   *\n"
@@ -56,7 +39,9 @@ int main(){
     int option = -1;
     cin >> option;
 
-    if(option == 0){
+    if(option == 2){
+        cout << endl;
+        cout << "Thank you for using the Youtube Channel Analytic program!" << endl;
         return 0;
     }
     else if (option == 1){
@@ -77,7 +62,7 @@ int main(){
         cout << "Red-Black Tree parse time: " << duration<double>(t2-t1).count() << " seconds" << endl;
 
         t1 = Clock::now();
-        //nTree.setRoot(parseCSVinNTree(degree));
+        nTree.setRoot(parseCSVinNTree(degree));
         t2 = Clock::now();
         cout << "N-ary Tree parse time: " << duration<double>(t2-t1).count() << " seconds" << endl;
         cout << endl;
@@ -104,12 +89,11 @@ int main(){
 
                 t1 = Clock::now();
                 queue<RBTree::Node*> rbQ = rbTree.searchByTopSubs(capacity);
-                queue<RBTree::Node*> rbQcopy = rbQ;
                 t2 = Clock::now();
                 cout << "Red-Black Tree search time: " << duration_cast<milliseconds>(t2-t1).count() << " milliseconds" << endl;
 
                 t1 = Clock::now();
-                queue<NTree::Node*> nQ;// = nTree.searchByTopSubs(capacity);
+                queue<NTree::Node*> nQ = nTree.searchByTopSubs(capacity);
                 t2 = Clock::now();
                 cout << "N-ary Tree search time: " << duration_cast<milliseconds>(t2-t1).count() << " milliseconds" << endl;
 
@@ -119,17 +103,11 @@ int main(){
                 cout << endl;
 
                 if(option == 1)
-                    if (viewTree == 1) {
-                        while (!rbQ.empty()) {
+                    if(viewTree == 1)
+                        while(!rbQ.empty()){
                             rbTree.smallPrint(rbQ.front());
                             rbQ.pop();
                         }
-                        cout << "Would you like the graphical interface? y or n" << endl;
-                        string GUI;
-                        cin >> GUI;
-                        if (GUI == "y")
-                            Graph::RBTreeHandler(rbQcopy, "Max Subscribers");
-                    }
                     else{
                         while(!nQ.empty()){
                             nTree.smallPrint(nQ.front());
@@ -141,12 +119,12 @@ int main(){
                         rbTree.largePrint(rbQ.front());
                         rbQ.pop();
                     }
-                    else{
-                        while(!nQ.empty()){
-                            nTree.largePrint(nQ.front());
-                            nQ.pop();
-                        }
+                else{
+                    while(!nQ.empty()){
+                        nTree.largePrint(nQ.front());
+                        nQ.pop();
                     }
+                }
                 cout << endl;
             }
             else if (option == 2){
@@ -196,6 +174,10 @@ int main(){
                 cout << endl;
             }
             else if (option == 3){
+                cin.ignore();
+                cin.clear();
+                cin.sync();
+
                 cout << "---------- Search by Category ---------" << endl;
                 cout << "Enter category name:";
                 string targetCat;
@@ -204,16 +186,17 @@ int main(){
                 cout << "How many channels do you want to display?";
                 int capacity;
                 cin >> capacity;
+                cout << endl;
 
                 t1 = Clock::now();
                 queue<RBTree::Node*> rbQ = rbTree.searchByCategory(targetCat, capacity);
                 t2 = Clock::now();
-                cout << "Red-Black Tree search time: " << duration_cast<nanoseconds>(t2-t1).count() << " milliseconds" << endl;
+                cout << "Red-Black Tree search time: " << duration_cast<milliseconds>(t2-t1).count() << " milliseconds" << endl;
 
                 t1 = Clock::now();
                 queue<NTree::Node*> nQ = nTree.searchByCategory(targetCat, capacity);
                 t2 = Clock::now();
-                cout << "N-ary Tree search time: " << duration_cast<nanoseconds>(t2-t1).count() << " milliseconds" << endl;
+                cout << "N-ary Tree search time: " << duration_cast<milliseconds>(t2-t1).count() << " milliseconds" << endl;
 
                 cout << endl;
                 printSubMenu();
@@ -246,13 +229,14 @@ int main(){
                 cout << endl;
             }
             else if (option == 4){
+                cin.ignore();
+                cin.clear();
+                cin.sync();
+
                 cout << "---------- Search by Country ----------" << endl;
                 cout << "Enter country name:";
                 string targetCt;
                 getline(cin, targetCt);
-                cin.ignore();
-                cin.clear();
-                cin.sync();
 
                 cout << "How many channels do you want to display?";
                 int capacity;
@@ -262,12 +246,12 @@ int main(){
                 t1 = Clock::now();
                 queue<RBTree::Node*> rbQ = rbTree.searchByCountry(targetCt, capacity);
                 t2 = Clock::now();
-                cout << "Red-Black Tree search time: " << duration_cast<nanoseconds>(t2-t1).count() << " milliseconds" << endl;
+                cout << "Red-Black Tree search time: " << duration_cast<milliseconds>(t2-t1).count() << " milliseconds" << endl;
 
                 t1 = Clock::now();
                 queue<NTree::Node*> nQ = nTree.searchByCountry(targetCt, capacity);
                 t2 = Clock::now();
-                cout << "N-ary Tree search time: " << duration_cast<nanoseconds>(t2-t1).count() << " milliseconds" << endl;
+                cout << "N-ary Tree search time: " << duration_cast<milliseconds>(t2-t1).count() << " milliseconds" << endl;
 
                 cout << endl;
                 printSubMenu();
@@ -300,20 +284,51 @@ int main(){
                 cout << endl;
             }
             else if (option == 5){
+                cout << "--------- Search by Channel ID --------" << endl;
+                cout << "Enter ChannelID:";
+                string targetID;
+                cin >> targetID;
+                cout << endl;
 
+                t1 = Clock::now();
+                RBTree::Node* tempRBNode = rbTree.searchByID(targetID);
+                t2 = Clock::now();
+                cout << "Red-Black Tree search time: " << duration_cast<milliseconds>(t2-t1).count() << " milliseconds" << endl;
+
+                t1 = Clock::now();
+                NTree::Node* tempNNode = nTree.searchByID(targetID);
+                t2 = Clock::now();
+                cout << "N-ary Tree search time: " << duration_cast<milliseconds>(t2-t1).count() << " milliseconds" << endl;
+                cout << endl;
+
+                if(viewTree == 1){
+                    if(tempRBNode != nullptr)
+                        rbTree.largePrint(tempRBNode);
+                    else
+                        cout << "Channel not found!" << endl;
+                }
+                else{
+                    if(tempNNode != nullptr)
+                        nTree.largePrint(tempNNode);
+                    else{
+                        cout <<  "Channel not found!" << endl;
+                    }
+                }
+                cout << endl;
             }
             else if(option == 6){
+                cout << "Thank you for using the Youtube Channel Analytic program!" << endl;
                 return 0;
             }
             else{
                 cout << "Error: Enter a value from the menu" << endl;
             }
-
         }
     }
-
     return 0;
 }
+
+/*=== CSV Parsers ===*/
 
 //Parses CSV cells and inserts them into RBTree. Returns root node of new RBTree
 RBTree::Node* parseCSVinRBTree(){
@@ -448,8 +463,7 @@ NTree::Node* parseCSVinNTree(int degree){
             c.setVidCount(videoCount);
             c.setCategoryID(categoryID);
 
-            //Inserts channel into RBTree and clears the line vector
-
+            //Inserts channel into NTree and clears the line vector
             if(tree.getRoot() == nullptr){
                 NTree::Node* newRoot = new NTree::Node(c, nullptr);
                 tree.insertNode(newRoot, nullptr);
@@ -466,6 +480,8 @@ NTree::Node* parseCSVinNTree(int degree){
     }
     return tree.getRoot();
 }
+
+/*=== Print Menus ===*/
 
 void printMainMenu() {
     cout << "-------------- Main Menu --------------\n"
@@ -484,4 +500,3 @@ void printSubMenu(){
             "2. Extended\n"
             "Please make a selection:";
 }
-

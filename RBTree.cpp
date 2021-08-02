@@ -176,7 +176,6 @@ void RBTree::inorderPrint(Node *newRoot){
     }
     else{
         inorderPrint(newRoot->left);
-
         cout << "ID: " << newRoot->channel.getID() << endl;
         cout << "Title: " << newRoot->channel.getTitle() << endl;
         cout << "Category: " << newRoot->channel.getCategory() << endl;
@@ -192,14 +191,14 @@ void RBTree::inorderPrint(Node *newRoot){
     }
 }
 
-void RBTree::smallPrint(Node *curr) {
+void RBTree::smallPrint(Node *curr){
     cout << "Title: " << curr->channel.getTitle() << endl;
     cout << "Subscribers: " << curr->channel.getSubCount() << endl;
     cout << "Channel ID: " << curr->channel.getID() << endl;
     cout << "---------------------------------------" << endl;
 }
 
-void RBTree::largePrint(Node *curr) {
+void RBTree::largePrint(Node *curr){
     cout << "Title: " << curr->channel.getTitle() << endl;
     cout << "Subscribers: " << curr->channel.getSubCount() << endl;
     cout << "Video Count: " << curr->channel.getVidCount() << endl;
@@ -217,7 +216,7 @@ void RBTree::largePrint(Node *curr) {
 
 /*= Search Functions =*/
 
-//Reverse inorder search that returns target Node
+//Reverse inorder iterative search that returns target Node
 RBTree::Node *RBTree::searchByID(string targetID){
     stack<Node*> traversalStack;
     Node* curr = root;
@@ -236,7 +235,7 @@ RBTree::Node *RBTree::searchByID(string targetID){
     return nullptr;
 }
 
-//Reverse inorder search that returns the top #capacity channels based on sub count
+//Reverse inorder iterative search that returns the top #capacity channels based on sub count
 queue<RBTree::Node *> RBTree::searchByTopSubs(int capacity){
     stack<Node*> traversalStack;
     queue<Node*> returnNodes;
@@ -258,7 +257,7 @@ queue<RBTree::Node *> RBTree::searchByTopSubs(int capacity){
     return returnNodes;
 }
 
-//Reverse inorder search that returns the top channels based on a minimum sub count
+//Reverse inorder iterative search that returns the top channels based on a minimum sub count
 queue<RBTree::Node *> RBTree::searchByMinSubs(int minSubCount){
     stack<Node*> traversalStack;
     queue<Node*> returnNodes;
@@ -278,7 +277,7 @@ queue<RBTree::Node *> RBTree::searchByMinSubs(int minSubCount){
     return returnNodes;
 }
 
-//Reverse inorder search by category (returns queue of channels with higher sub counts up front)
+//Reverse inorder iterative search by category (returns queue of channels with higher sub counts up front)
 queue<RBTree::Node *> RBTree::searchByCategory(string targetCat, int capacity){
     stack<Node*> traversalStack;
     queue<Node*> returnNodes;
@@ -302,7 +301,7 @@ queue<RBTree::Node *> RBTree::searchByCategory(string targetCat, int capacity){
     return returnNodes;
 }
 
-//Reverse inorder search by country (returns queue of channels with higher sub counts up front)
+//Reverse inorder iterative search by country (returns queue of channels with higher sub counts up front)
 queue<RBTree::Node *> RBTree::searchByCountry(string targetCt, int capacity){
     stack<Node*> traversalStack;
     queue<Node*> returnNodes;

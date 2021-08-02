@@ -1,8 +1,6 @@
 #include "NTree.h"
 #include <queue>
-#include <stack>
 #include <cmath>
-#include <deque>
 #include <algorithm>
 using namespace std;
 
@@ -32,7 +30,6 @@ void NTree::setRoot(Node *newRoot){
 
 /*= Insertion =*/
 void NTree::insertNode(Node* c, Node* prev){
-    //Citation: Inspired by section 27.10 in OpenDSA
 
     /* This insertion method inserts nodes by top down level order,
      * meaning that all possible bins are filled before
@@ -53,7 +50,6 @@ void NTree::insertNode(Node* c, Node* prev){
     //If all bins in a row are full
     else if(lineWidth ==  pow(degree, height)){
         Node *curr = root;
-
         while(curr->children.size() != 0){
             curr = curr->children[0];
         }
@@ -64,20 +60,28 @@ void NTree::insertNode(Node* c, Node* prev){
     }
     //If a bin is full, but there are successor bins down the row
     else{
-        queue<Node*> childrenNodes;
-        childrenNodes.push(root);
-        while(!childrenNodes.empty()){
-            if(childrenNodes.front()->children.size() == 0){
-                childrenNodes.front()->children.push_back(c);
-                c->parent = childrenNodes.front();
-                break;
+        Node* curr = prev->parent;
+        //Repeatedly backtracks up a level until a new spot is found
+        while(true){
+            queue<Node*> childrenNodes;
+            childrenNodes.push(prev);
+            int currWidth;
+            while(!childrenNodes.empty()){
+                if(childrenNodes.front()->children.size() == 0 && currWidth < lineWidth){
+                    childrenNodes.front()->children.push_back(c);
+                    c->parent = childrenNodes.front();
+                    lineWidth++;
+                    return;
+                }
+                for(int i = 0; i < childrenNodes.front()->children.size(); i++){
+                    childrenNodes.push(childrenNodes.front()->children[i]);
+                    currWidth++;
+                }
+                childrenNodes.pop();
+                currWidth--;
             }
-            for(int i = 0; i < childrenNodes.front()->children.size(); i++){
-                childrenNodes.push(childrenNodes.front()->children[i]);
-            }
-            childrenNodes.pop();
+            curr = curr->parent;
         }
-        lineWidth++;
     }
 }
 
@@ -148,6 +152,7 @@ NTree::Node *NTree::searchByID(string targetID){
     }
 }
 
+//Level order search that returns queue of size #capacity with top channels
 queue<NTree::Node *> NTree::searchByTopSubs(int capacity) {
     queue<Node*> searchQ;
     queue<Node*> returnQ;
@@ -155,6 +160,7 @@ queue<NTree::Node *> NTree::searchByTopSubs(int capacity) {
     searchQ.push(root);
     int parentCount = 1;
 
+    //Level order search for top channels
     while(!searchQ.empty()){
         for(int j = 0; j < parentCount; j++){
             for(int i = 0; i < searchQ.front()->children.size(); i++){
@@ -165,6 +171,7 @@ queue<NTree::Node *> NTree::searchByTopSubs(int capacity) {
         }
         parentCount = searchQ.size();
     }
+    //Data must be sorted since CSV file data is NOT completely sorted
     sort(nodes.begin(), nodes.end(), [](Node* lhs, Node* rhs){return lhs->channel.subscriberCount < rhs->channel.subscriberCount;});
     int index = nodes.size()-1;
     for(int i = 0; i < capacity; i++) {
@@ -174,6 +181,7 @@ queue<NTree::Node *> NTree::searchByTopSubs(int capacity) {
     return returnQ;
 }
 
+//Level order search that returns queue of all channels with < minSubCount
 queue<NTree::Node *> NTree::searchByMinSubs(int minSubCount) {
     queue<Node*> searchQ;
     queue<Node*> returnQ;
@@ -181,6 +189,7 @@ queue<NTree::Node *> NTree::searchByMinSubs(int minSubCount) {
     searchQ.push(root);
     int parentCount = 1;
 
+    //Level order search
     while(!searchQ.empty()){
         for(int j = 0; j < parentCount; j++){
             for(int i = 0; i < searchQ.front()->children.size(); i++){
@@ -191,6 +200,7 @@ queue<NTree::Node *> NTree::searchByMinSubs(int minSubCount) {
         }
         parentCount = searchQ.size();
     }
+    //Data must be sorted since CSV file data is NOT completely sorted
     sort(nodes.begin(), nodes.end(), [](Node* lhs, Node* rhs){return lhs->channel.subscriberCount < rhs->channel.subscriberCount;});
     int index = nodes.size()-1;
     while(nodes[index]->channel.getSubCount() > minSubCount){
@@ -200,15 +210,15 @@ queue<NTree::Node *> NTree::searchByMinSubs(int minSubCount) {
     return returnQ;
 }
 
+//Level order search that returns queue of size #capacity of top channels in target category
 queue<NTree::Node *> NTree::searchByCategory(string targetCat, int capacity) {
     queue<Node*> searchQ;
     queue<Node*> returnQ;
     vector<Node*> nodes;
     searchQ.push(root);
     int parentCount = 1;
-    if(searchQ.front()->channel.getCategory() == targetCat){
-        nodes.push_back(searchQ.front());
-    }
+
+    //Level order search of category
     while(!searchQ.empty()){
         for(int j = 0; j < parentCount; j++){
             for(int i = 0; i < searchQ.front()->children.size(); i++){
@@ -221,22 +231,24 @@ queue<NTree::Node *> NTree::searchByCategory(string targetCat, int capacity) {
         }
         parentCount = searchQ.size();
     }
+    //Data must be sorted since CSV file data is NOT completely sorted
     sort(nodes.begin(), nodes.end(), [](Node* lhs, Node* rhs){return lhs->channel.subscriberCount < rhs->channel.subscriberCount;});
     for(int i = 1; i <= capacity; i++){
-        returnQ.push(nodes[nodes.size()-i]);
+        if(i < nodes.size())
+            returnQ.push(nodes[nodes.size()-i]);
     }
     return returnQ;
 }
 
+//Level order search that returns queue of size #capacity of top channels in target country
 queue<NTree::Node *> NTree::searchByCountry(string targetCt, int capacity) {
     queue<Node*> searchQ;
     queue<Node*> returnQ;
     vector<Node*> nodes;
     searchQ.push(root);
     int parentCount = 1;
-    if(searchQ.front()->channel.getCountry() == targetCt){
-        nodes.push_back(searchQ.front());
-    }
+
+    //Level order search of country
     while(!searchQ.empty()){
         for(int j = 0; j < parentCount; j++){
             for(int i = 0; i < searchQ.front()->children.size(); i++){
@@ -249,9 +261,11 @@ queue<NTree::Node *> NTree::searchByCountry(string targetCt, int capacity) {
         }
         parentCount = searchQ.size();
     }
+    //Data must be sorted since CSV file data is NOT completely sorted
     sort(nodes.begin(), nodes.end(), [](Node* lhs, Node* rhs){return lhs->channel.subscriberCount < rhs->channel.subscriberCount;});
     for(int i = 1; i <= capacity; i++){
-        returnQ.push(nodes[nodes.size()-i]);
+        if(i < nodes.size())
+            returnQ.push(nodes[nodes.size()-i]);
     }
     return returnQ;
 }
