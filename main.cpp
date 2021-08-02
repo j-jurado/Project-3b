@@ -8,6 +8,8 @@
 #include <vector>
 #include <chrono>
 #include <string>
+#include "Graph.h"
+
 
 using namespace std;
 using namespace chrono;
@@ -18,8 +20,20 @@ void printMainMenu();
 void printSubMenu();
 typedef high_resolution_clock Clock;
 
-int main(){
+void testGraph() {
+    RBTree rbTree;
+    rbTree.setRoot(parseCSVinRBTree());
+    int capacity;
+    cout << "Number of channels to display: ";
+    cin >> capacity;
+    cout << endl;
+    queue<RBTree::Node*> rbQ = rbTree.searchByTopSubs(capacity);
+    Graph::RBTreeHandler(rbQ, "Highest subscribers");
 
+}
+
+
+int main(){
     cout << "*********************************\n"
             "*   Youtube Channel Analytics   *\n"
             "*********************************\n"
@@ -102,29 +116,35 @@ int main(){
                 cin >> option;
                 cout << endl;
 
-                if(option == 1)
-                    if(viewTree == 1)
-                        while(!rbQ.empty()){
+                if (option == 1)
+                    if (viewTree == 1)
+                        while (!rbQ.empty()) {
                             rbTree.smallPrint(rbQ.front());
                             rbQ.pop();
                         }
-                    else{
-                        while(!nQ.empty()){
+                    else {
+                        while (!nQ.empty()) {
                             nTree.smallPrint(nQ.front());
                             nQ.pop();
                         }
                     }
                 else if (option == 2)
-                    while(!rbQ.empty()){
-                        rbTree.largePrint(rbQ.front());
-                        rbQ.pop();
+                    if (viewTree == 1)
+                        while (!rbQ.empty()) {
+                            rbTree.largePrint(rbQ.front());
+                            rbQ.pop();
+                        }
+                    else {
+                        while (!nQ.empty()) {
+                            nTree.largePrint(nQ.front());
+                            nQ.pop();
+                        }
                     }
-                else{
-                    while(!nQ.empty()){
-                        nTree.largePrint(nQ.front());
-                        nQ.pop();
-                    }
-                }
+                else if (option == 3)
+                    if (viewTree == 1)
+                        Graph::RBTreeHandler(rbQ, "Most Subscribers - Red Black Tree");
+                    else
+                        Graph::NTreeHandler(nQ, "Most Subscribers - N Tree");
                 cout << endl;
             }
             else if (option == 2){
@@ -148,29 +168,35 @@ int main(){
                 cin >> option;
                 cout << endl;
 
-                if(option == 1)
-                    if(viewTree == 1)
-                        while(!rbQ.empty()){
+                if (option == 1)
+                    if (viewTree == 1)
+                        while (!rbQ.empty()) {
                             rbTree.smallPrint(rbQ.front());
                             rbQ.pop();
                         }
-                    else{
-                        while(!nQ.empty()){
+                    else {
+                        while (!nQ.empty()) {
                             nTree.smallPrint(nQ.front());
                             nQ.pop();
                         }
                     }
                 else if (option == 2)
-                    while(!rbQ.empty()){
-                        rbTree.largePrint(rbQ.front());
-                        rbQ.pop();
+                    if (viewTree == 1)
+                        while (!rbQ.empty()) {
+                            rbTree.largePrint(rbQ.front());
+                            rbQ.pop();
+                        }
+                    else {
+                        while (!nQ.empty()) {
+                            nTree.largePrint(nQ.front());
+                            nQ.pop();
+                        }
                     }
-                else{
-                    while(!nQ.empty()){
-                        nTree.largePrint(nQ.front());
-                        nQ.pop();
-                    }
-                }
+                else if (option == 3)
+                    if (viewTree == 1)
+                        Graph::RBTreeHandler(rbQ, "Fewest Subscribers - Red Black Tree");
+                    else
+                        Graph::NTreeHandler(nQ, "Fewest Subscribers - N Tree");
                 cout << endl;
             }
             else if (option == 3){
@@ -203,29 +229,35 @@ int main(){
                 cin >> option;
                 cout << endl;
 
-                if(option == 1)
-                    if(viewTree == 1)
-                        while(!rbQ.empty()){
+                if (option == 1)
+                    if (viewTree == 1)
+                        while (!rbQ.empty()) {
                             rbTree.smallPrint(rbQ.front());
                             rbQ.pop();
                         }
-                    else{
-                        while(!nQ.empty()){
+                    else {
+                        while (!nQ.empty()) {
                             nTree.smallPrint(nQ.front());
                             nQ.pop();
                         }
                     }
                 else if (option == 2)
-                    while(!rbQ.empty()){
-                        rbTree.largePrint(rbQ.front());
-                        rbQ.pop();
+                    if (viewTree == 1)
+                        while (!rbQ.empty()) {
+                            rbTree.largePrint(rbQ.front());
+                            rbQ.pop();
+                        }
+                    else {
+                        while (!nQ.empty()) {
+                            nTree.largePrint(nQ.front());
+                            nQ.pop();
+                        }
                     }
-                else{
-                    while(!nQ.empty()){
-                        nTree.largePrint(nQ.front());
-                        nQ.pop();
-                    }
-                }
+                else if (option == 3)
+                    if (viewTree == 1)
+                        Graph::RBTreeHandler(rbQ, "By Category - Red Black Tree");
+                    else
+                        Graph::NTreeHandler(nQ, "By Category - N Tree");
                 cout << endl;
             }
             else if (option == 4){
@@ -258,29 +290,36 @@ int main(){
                 cin >> option;
                 cout << endl;
 
-                if(option == 1)
-                    if(viewTree == 1)
-                        while(!rbQ.empty()){
+                if (option == 1)
+                    if (viewTree == 1)
+                        while (!rbQ.empty()) {
                             rbTree.smallPrint(rbQ.front());
                             rbQ.pop();
                         }
-                    else{
-                        while(!nQ.empty()){
+                    else {
+                        while (!nQ.empty()) {
                             nTree.smallPrint(nQ.front());
                             nQ.pop();
                         }
                     }
                 else if (option == 2)
-                    while(!rbQ.empty()){
-                        rbTree.largePrint(rbQ.front());
-                        rbQ.pop();
+                    if (viewTree == 1)
+                        while (!rbQ.empty()) {
+                            rbTree.largePrint(rbQ.front());
+                            rbQ.pop();
+                        }
+                    else {
+                        while (!nQ.empty()) {
+                            nTree.largePrint(nQ.front());
+                            nQ.pop();
+
+                        }
                     }
-                else{
-                    while(!nQ.empty()){
-                        nTree.largePrint(nQ.front());
-                        nQ.pop();
-                    }
-                }
+                else if (option == 3)
+                    if (viewTree == 1)
+                        Graph::RBTreeHandler(rbQ, "By Country - Red Black Tree");
+                    else
+                        Graph::NTreeHandler(nQ, "By Country - N Tree");
                 cout << endl;
             }
             else if (option == 5){
@@ -498,5 +537,6 @@ void printSubMenu(){
     cout << "Would you like to view extended or minimal statistics?\n"
             "1. Minimal\n"
             "2. Extended\n"
+            "3. Graphic Histogram\n"
             "Please make a selection:";
 }

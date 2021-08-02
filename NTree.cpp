@@ -203,7 +203,7 @@ queue<NTree::Node *> NTree::searchByMinSubs(int minSubCount) {
     //Data must be sorted since CSV file data is NOT completely sorted
     sort(nodes.begin(), nodes.end(), [](Node* lhs, Node* rhs){return lhs->channel.subscriberCount < rhs->channel.subscriberCount;});
     int index = nodes.size()-1;
-    while(nodes[index]->channel.getSubCount() > minSubCount){
+    while(index > 0 && nodes[index]->channel.getSubCount() > minSubCount){
         returnQ.push(nodes[index]);
         index--;
     }
