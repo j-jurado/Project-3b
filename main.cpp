@@ -10,6 +10,7 @@
 #include <vector>
 #include <chrono>
 #include <string>
+#include "Graph.h"
 
 using namespace std;
 using namespace chrono;
@@ -20,7 +21,21 @@ void printMainMenu();
 void printSubMenu();
 typedef high_resolution_clock Clock;
 
+void GraphDebugger() {
+    RBTree rbTree;
+    rbTree.setRoot(parseCSVinRBTree());
+    int capacity;
+    cout << "Number of channels to display: ";
+    cin >> capacity;
+    cout << endl;
+    queue<RBTree::Node*> rbQ = rbTree.searchByTopSubs(capacity);
+    queue<RBTree::Node*> rbQcopy = rbQ;
+
+    Graph::RBTreeHandler(rbQcopy, "Max Subscribers");
+}
+
 int main(){
+    //GraphDebugger();
 
     cout << "*********************************\n"
             "*   Youtube Channel Analytics   *\n"
@@ -62,7 +77,7 @@ int main(){
         cout << "Red-Black Tree parse time: " << duration<double>(t2-t1).count() << " seconds" << endl;
 
         t1 = Clock::now();
-        nTree.setRoot(parseCSVinNTree(degree));
+        //nTree.setRoot(parseCSVinNTree(degree));
         t2 = Clock::now();
         cout << "N-ary Tree parse time: " << duration<double>(t2-t1).count() << " seconds" << endl;
         cout << endl;
@@ -89,11 +104,12 @@ int main(){
 
                 t1 = Clock::now();
                 queue<RBTree::Node*> rbQ = rbTree.searchByTopSubs(capacity);
+                queue<RBTree::Node*> rbQcopy = rbQ;
                 t2 = Clock::now();
                 cout << "Red-Black Tree search time: " << duration_cast<milliseconds>(t2-t1).count() << " milliseconds" << endl;
 
                 t1 = Clock::now();
-                queue<NTree::Node*> nQ = nTree.searchByTopSubs(capacity);
+                queue<NTree::Node*> nQ;// = nTree.searchByTopSubs(capacity);
                 t2 = Clock::now();
                 cout << "N-ary Tree search time: " << duration_cast<milliseconds>(t2-t1).count() << " milliseconds" << endl;
 
@@ -103,11 +119,17 @@ int main(){
                 cout << endl;
 
                 if(option == 1)
-                    if(viewTree == 1)
-                        while(!rbQ.empty()){
+                    if (viewTree == 1) {
+                        while (!rbQ.empty()) {
                             rbTree.smallPrint(rbQ.front());
                             rbQ.pop();
                         }
+                        cout << "Would you like the graphical interface? y or n" << endl;
+                        string GUI;
+                        cin >> GUI;
+                        if (GUI == "y")
+                            Graph::RBTreeHandler(rbQcopy, "Max Subscribers");
+                    }
                     else{
                         while(!nQ.empty()){
                             nTree.smallPrint(nQ.front());
@@ -462,3 +484,4 @@ void printSubMenu(){
             "2. Extended\n"
             "Please make a selection:";
 }
+
